@@ -1,16 +1,22 @@
 package com.simplefacedetectionapp;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
-import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity {
-
+public class MainActivity extends Activity {
+    private final static int CAMERA_RETURN_CODE = 1410;
+    private FaceImageView fiw;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fiw = (FaceImageView) findViewById(R.id.facedet);
+
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_RETURN_CODE);
     }
 
     @Override
@@ -21,17 +27,13 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAMERA_RETURN_CODE) {
+            Bitmap cameraBmp = (Bitmap) data.getExtras().get("data");
+            //fiw.setImageBitmap(cameraBmp);
+            fiw.setImage(cameraBmp);
+            fiw.detectFaces();
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
 }
